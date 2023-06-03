@@ -36,26 +36,23 @@ class AlfaController extends Controller
             ->where('alfa_client_id', $customerId)
             ->firstOrFail();
 
-        if ($model->status == 1) {
+        $statusId = match ($branchId) {
+            Client::BRANCH_1_ID => Client::STATUS_ID_CAME_1,
+            Client::BRANCH_2_ID => Client::STATUS_ID_CAME_2,
+        };
 
-            $statusId = match ($branchId) {
-                Client::BRANCH_1_ID => Client::STATUS_ID_CAME_1,
-                Client::BRANCH_2_ID => Client::STATUS_ID_CAME_2,
-            };
+        $lead = $this->amoApi
+            ->service
+            ->leads()
+            ->find($model->amo_lead_id);
 
-            $lead = $this->amoApi
-                ->service
-                ->leads()
-                ->find($model->amo_lead_id);
+        $lead->status_id = $statusId;
+        $lead->save();
 
-            $lead->status_id = $statusId;
-            $lead->save();
+        Notes::addOne($lead, 'Клиент пришел на пробное, карточка обновлена');
 
-            Notes::addOne($lead, 'Клиент пришел на пробное, карточка обновлена');
-
-            $model->status = Client::STATUS_CAME_1;
-            $model->save();
-        }
+        $model->status = Client::STATUS_CAME_1;
+        $model->save();
     }
 
     //пропустил пробное
@@ -71,26 +68,23 @@ class AlfaController extends Controller
             ->where('alfa_client_id', $customerId)
             ->firstOrFail();
 
-        if ($model->status == 1) {
+        $statusId = match ($branchId) {
+            Client::BRANCH_1_ID => Client::STATUS_ID_OMISSION_1,
+            Client::BRANCH_2_ID => Client::STATUS_ID_OMISSION_2,
+        };
 
-            $statusId = match ($branchId) {
-                Client::BRANCH_1_ID => Client::STATUS_ID_OMISSION_1,
-                Client::BRANCH_2_ID => Client::STATUS_ID_OMISSION_2,
-            };
+        $lead = $this->amoApi
+            ->service
+            ->leads()
+            ->find($model->amo_lead_id);
 
-            $lead = $this->amoApi
-                ->service
-                ->leads()
-                ->find($model->amo_lead_id);
+        $lead->status_id = $statusId;
+        $lead->save();
 
-            $lead->status_id = $statusId;
-            $lead->save();
+        Notes::addOne($lead, 'Клиент пропустил/отменил пробное');
 
-            Notes::addOne($lead, 'Клиент пропустил/отменил пробное');
-
-            $model->status = Client::STATUS_OMISSION_1;
-            $model->save();
-        }
+        $model->status = Client::STATUS_OMISSION_1;
+        $model->save();
     }
 
     //получение оплаты
