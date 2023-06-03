@@ -58,7 +58,10 @@ class AlfaController extends Controller
     //пропустил пробное
     public function omission(Request $request)
     {
-        $less = (new Lesson($this->alfaApi))->getFirst(['id' => $request->entity_id]);
+        $less = (new Lesson($this->alfaApi))->getFirst([
+            'id' => $request->entity_id,
+            'status' => "2"
+        ]);
 
         $branchId   = $less['branch_id'];
         $customerId = $less['customer_ids'][0];
