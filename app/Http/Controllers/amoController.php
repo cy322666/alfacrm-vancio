@@ -61,7 +61,7 @@ class amoController extends Controller
                     'amo_contact_id'    => $contact->id ?? null,
                     'amo_contact_phone' => Contacts::clearPhone($contact->cf('Телефон')->getValue()),
                     'amo_contact_email' => $contact->cf('Email')->getValue(),
-                    'amo_contact_name'  => $contact->first_name.' '.$contact->last_name,
+                    'amo_contact_name'  => $contact->name,
                     'alfa_branch_id'    => $branchId,
                     'amo_lead_id'       => $lead->id,
                 ]);
