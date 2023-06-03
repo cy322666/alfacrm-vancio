@@ -26,9 +26,9 @@ class Client
     const STATUS_OMISSION_2 = 26;
     const STATUS_CAME_2 = 3;
 
-    const STATUS_ID_RECORDED_2 = 57761682;
-    const STATUS_ID_OMISSION_2 = 57847290;
-    const STATUS_ID_CAME_2 = 57847294;
+    const STATUS_ID_RECORDED_2 = 57814386;
+    const STATUS_ID_OMISSION_2 = 57814390;
+    const STATUS_ID_CAME_2 = 57814394;
 
     const CLIENT_TYPE_ID = 1; //физик
     const CLIENT_STUDY = 0; //is_study 0 - лид 1 - клиент
