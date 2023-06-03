@@ -11,7 +11,6 @@ use App\Services\amoCRM\Client as amoApi;
 use App\Services\AlfaCRM\Client as alfaApi;
 use Illuminate\Support\Facades\Log;
 use Nikitanp\AlfacrmApiPhp\Entities\Customer;
-use Nikitanp\AlfacrmApiPhp\Entities\LeadStatus;
 
 class amoController extends Controller
 {
