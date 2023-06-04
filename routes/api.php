@@ -32,6 +32,6 @@ Route::prefix('alfacrm')->group(function () {
 
 //    Route::post('archive', [AlfaController::class, 'archive']);
 
-    Route::post('omission', [AlfaController::class, 'omission']);
+//    Route::post('omission', [AlfaController::class, 'omission']);
 });
 
