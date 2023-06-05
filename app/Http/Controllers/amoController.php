@@ -56,25 +56,20 @@ class amoController extends Controller
             };
 
             $model = Lead::query()
-                ->create([
-                    'amo_contact_id'    => $contact->id ?? null,
-                    'amo_contact_phone' => Contacts::clearPhone($contact->cf('Телефон')->getValue()),
-                    'amo_contact_email' => $contact->cf('Email')->getValue(),
-                    'amo_contact_name'  => $contact->name,
-                    'alfa_branch_id'    => $branchId,
-                    'amo_lead_id'       => $lead->id,
-                ]);
+                ->where('contact_id', $contact->id)
+                ->first();
 
-//            $customers = (new Customer($this->alfaApi, $branchId))
-//                ->get(0, [
-////                    'removed' => 1,
-//                    'phone'   => $model->amo_contact_phone,
-//                ]);
-//
-//            if ($customers['total'] > 0)
-//
-//                $customerId = $customers['items'][0]['id'];
-//            else {
+            if (!$model) {
+
+                $model = Lead::query()
+                    ->create([
+                        'amo_contact_id'    => $contact->id ?? null,
+                        'amo_contact_phone' => Contacts::clearPhone($contact->cf('Телефон')->getValue()),
+                        'amo_contact_email' => $contact->cf('Email')->getValue(),
+                        'amo_contact_name'  => $contact->name,
+                        'alfa_branch_id'    => $branchId,
+                        'amo_lead_id'       => $lead->id,
+                    ]);
 
                 $response = (new Customer($this->alfaApi))
                     ->create([
@@ -92,12 +87,30 @@ class amoController extends Controller
                         ]
                     ]);
 
-                if ($response['success'] == true)
+            } else {
 
-                    $customerId = $response['model']['id'];
-                else
-                    Log::error(__METHOD__, $response);
-//            }
+                $response = (new Customer($this->alfaApi))
+                    ->update($model->alfa_client_id, [
+                        'name'       => $model->amo_contact_name,
+                        'branch_ids' => [$model->alfa_branch_id],
+                        'is_study'   => Client::CLIENT_STUDY,
+                        'legal_type' => Client::CLIENT_TYPE_ID,
+                        'phone'      => $model->amo_contact_phone,
+                        'legal_name' => $model->amo_contact_name,
+                        'email'      => $model->amo_contact_email,
+                        'lead_status_id' => $studyId,
+                        'web'        => [
+                            "https://".env('AMO_SUBDOMAIN').".amocrm.ru/contacts/detail/$contact->id",
+                            "https://".env('AMO_SUBDOMAIN').".amocrm.ru/leads/detail/$lead->id",
+                        ]
+                    ]);
+            }
+
+            if ($response['success'] == true)
+
+                $customerId = $response['model']['id'];
+            else
+                Log::error(__METHOD__, $response);
 
             $model->alfa_client_id = $customerId ?? null;
             $model->status = $studyId;
@@ -105,9 +118,10 @@ class amoController extends Controller
 
             Notes::addOne($lead, 'Успешно отправлен в AlfaCRM');
 
-            $lead->cf('Link AlfaCRM')->setValue(
-                env('ALFACRM_DOMAIN')."/company/$model->alfa_branch_id/customer/view?id=$model->alfa_client_id"
-            );
+            $lead->cf('Link AlfaCRM')
+                ->setValue(
+                    env('ALFACRM_DOMAIN')."/company/$model->alfa_branch_id/customer/view?id=$model->alfa_client_id"
+                );
             $lead->save();
 
         } catch (\Exception $exception) {
