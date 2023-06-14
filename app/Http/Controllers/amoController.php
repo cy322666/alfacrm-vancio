@@ -91,7 +91,7 @@ class amoController extends Controller
 
                 $response = (new Customer($this->alfaApi))
                     ->update($model->alfa_client_id, [
-                        'name'       => $model->amo_contact_name,
+                        'name'       => $model->amo_contact_name == ' ' || null ? 'undefined' : $model->amo_contact_name,
                         'branch_ids' => [$model->alfa_branch_id],
                         'is_study'   => Client::CLIENT_STUDY,
                         'legal_type' => Client::CLIENT_TYPE_ID,
