@@ -56,7 +56,7 @@ class amoController extends Controller
             };
 
             $model = Lead::query()
-                ->where('contact_id', $contact->id)
+                ->where('amo_contact_id', $contact->id)
                 ->first();
 
             if (!$model) {
