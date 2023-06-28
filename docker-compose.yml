@@ -1,0 +1,57 @@
+version: '3.5'
+
+services:
+    app:
+        build: ./docker/images/php81
+        working_dir: /var/www/html
+        ports:
+            - "6051:8000"
+        links:
+            - postgresql
+            - redis
+        networks:
+            - cluster
+        volumes:
+            - ./application:/var/www/html
+            - ./docker/images/php81/files/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+        restart: always
+    postgresql:
+        image: postgres:14.1-alpine
+        ports:
+            - "5431:5432"
+        networks:
+            - cluster
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: pQLkm8NOkS0gOBox
+            POSTGRES_DB: clever
+        volumes:
+            - ./docker/images/postgres/files/postgresql.conf:/etc/postgresql.conf
+        command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
+        restart: always
+    redis:
+        image: bitnami/redis:latest
+        ports:
+            - "6379:6379"
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+        networks:
+            - cluster
+        restart: always
+    supervisor:
+        build: ./docker/images/supervisor
+        working_dir: /var/www/html
+        restart: unless-stopped
+        volumes:
+            - ./application:/var/www/html
+            - ./docker/images/supervisor/files:/etc/supervisor/conf.d/
+        ports:
+            - "8008:8008"
+        networks:
+            - cluster
+networks:
+    cluster:
+        name: cluster
+        external: true
+        driver: bridge
+
