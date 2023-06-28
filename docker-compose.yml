@@ -18,7 +18,7 @@ services:
             - "5432:5432"
         environment:
             POSTGRES_USER: root
-            POSTGRES_PASSWORD: sad12sdJS&ADY&*AS
+            POSTGRES_PASSWORD: root
             POSTGRES_DB: root
         volumes:
             - ./docker/images/postgres/files/postgresql.conf:/etc/postgresql.conf
