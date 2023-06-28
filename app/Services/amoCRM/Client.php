@@ -58,7 +58,7 @@ class Client
             $this->auth = true;
 
         } catch (\Throwable $exception) {
-
+            dd($exception->getMessage());
             if ($this->storage->model->refresh_token) {
 
                 $oauth = $this->service->refreshAccessToken($this->storage->model->refresh_token);
