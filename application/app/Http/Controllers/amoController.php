@@ -126,7 +126,7 @@ class amoController extends Controller
 
         } catch (\Exception $exception) {
 
-            Log::error(__METHOD__.' : '.$exception->getMessage());
+            Log::error(__METHOD__.' : '.$exception->getMessage().' '.$exception->getFile().' '.$exception->getLine());
         }
     }
 }
