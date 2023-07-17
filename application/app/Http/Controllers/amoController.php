@@ -15,16 +15,25 @@ use Nikitanp\AlfacrmApiPhp\Entities\Customer;
 class amoController extends Controller
 {
     private \Nikitanp\AlfacrmApiPhp\Client $alfaApi;
-    protected amoApi $amoApi;
+    private amoApi $amoApi;
 
-    public function __construct(
-        Request $request,
-    ) {
-        parent::__construct();
-
+    public function __construct(Request $request)
+    {
         Log::info(__METHOD__. ' > '.$request->method(), $request->toArray());
 
         $this->alfaApi = alfaApi::init();
+
+        $account = Account::query()->first();
+
+        try {
+
+            $this->amoApi = (new \App\Services\amoCRM\Client($account))->init();
+        } catch (\Throwable $e) {
+
+            Log::error(__METHOD__.' '.$e->getMessage());
+
+            $this->amoApi = (new \App\Services\amoCRM\Client($account))->init();
+        }
     }
 
     //записан на пробное
