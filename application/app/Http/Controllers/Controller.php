@@ -16,21 +16,9 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected Client $amoApi;
-
     /**
      * @throws Exception
      */
     public function __construct()
-    {
-        try {
-            $account = Account::query()->first();
-
-            $this->amoApi = (new Client($account))->init();
-
-        } catch (\Throwable $e) {
-
-            Log::error(__METHOD__.' : '.$e->getMessage().' '.$e->getFile().' '.$e->getLine());
-        }
-    }
+    {}
 }
