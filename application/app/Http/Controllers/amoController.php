@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Services\AlfaCRM\Client;
 use App\Services\amoCRM\Helpers\Contacts;
 use App\Services\amoCRM\Helpers\Notes;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use App\Services\amoCRM\Client as amoApi;
 use App\Services\AlfaCRM\Client as alfaApi;
